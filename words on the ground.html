@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Words on the Ground</title>
+
+    <link rel="stylesheet" href="hpstyle.css">
+
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    >
+
+    <style>
+
+        html, body {
+
+            height: 100%;
+            margin: 0;
+            font-family: serif;
+
+        }
+
+        .menu-button {
+    position: relative;
+    z-index: 1001;
+}
+
+
+        #map {
+
+            height: 500px;
+            width: 100%;
+            margin-bottom: 40px;
+
+        }
+
+
+        #poemModal {
+
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.85);
+            color: white;
+            padding: 40px;
+            box-sizing: border-box;
+            overflow: auto;
+
+        }
+
+
+        #close {
+
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 28px;
+            cursor: pointer;
+
+        }
+
+
+        #modal-title {
+
+            font-weight: normal;
+
+        }
+
+
+        #modal-body {
+
+            line-height: 2;
+
+        }
+
+
+        /* Update */
+
+        #update-list {
+
+            margin-top: 40px;
+            margin-bottom: 40px;
+
+        }
+
+
+        .update-item {
+
+            margin-bottom: 25px;
+            cursor: pointer;
+
+        }
+
+
+        .update-item:hover {
+
+            opacity: 0.5;
+
+        }
+
+
+        .update-date {
+
+            font-size: 0.9em;
+            margin-right: 20px;
+
+        }
+
+
+        /* 青いピン */
+
+        .blue-pin {
+
+            width: 22px;
+            height: 22px;
+            background: #4285f4;
+            border-radius: 50% 50% 50% 0;
+            transform: rotate(-45deg);
+            opacity: 0.7;
+
+        }
+
+
+        .blue-pin::after {
+
+            content: "";
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            top: 7px;
+            left: 7px;
+
+        }
+
+        /* 赤いピン */
+
+        .red-pin {
+    width: 22px;
+    height: 22px;
+    background: #e53935;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    opacity: 0.7;
+}
+
+.red-pin::after {
+    content: "";
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+    top: 7px;
+    left: 7px;
+}
+
+
+        /* ピンのジャンプ */
+
+     .pin-jump {
+    animation: pinJump 0.8s ease;
+}
+
+@keyframes pinJump {
+
+    0% {
+        transform: translateY(0) rotate(-45deg);
+    }
+
+    30% {
+        transform: translateY(-25px) rotate(-45deg);
+    }
+
+    50% {
+        transform: translateY(0) rotate(-45deg);
+    }
+
+    70% {
+        transform: translateY(-12px) rotate(-45deg);
+    }
+
+    100% {
+        transform: translateY(0) rotate(-45deg);
+    }
+
+}
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+      <a href="top.html" class="name">
+        小倉尚子｜Ogura Naoko
+    </a>
+
+    <button class="menu-button" aria-label="メニューを開く">
+        ≡
+    </button>
+
+
+    <nav class="menu">
+
+    <a href="works.html">works</a>
+    <a href="words on the ground.html">words on the ground</a>
+    <a href="about.html">about</a>
+
+    <div class="social-links">
+
+    <a href="https://www.instagram.com/ichito_1/" target="_blank" aria-label="Instagram">
+        <img src="Instagram_Glyph_Black.svg" alt="">
+    </a>
+
+
+    <a href="https://soundcloud.com/ichito-528352315" target="_blank" aria-label="SoundCloud">
+        <img src="https://cdn.prod.website-files.com/62a0a0168756b795debc65bc/69ef2abb30d1aae32ea4f517_Horizontal%20Black%20(transparent)-download.webp" alt="">
+    </a>
+
+　　</div>
+　　</nav>
+
+</header>
+
+
+<nav>
+
+    <p>
+     地図に立ったピンを押すと、その場所にまつわる詩やエッセイを読むことができます<br>
+     ＊赤いピンは詩集『NATIVE VOID』掲載詩の所在です
+    </p>
+
+
+    <div id="map"></div>
+
+
+    <h2>Update</h2>
+
+    <div id="update-list"></div>
+
+</nav>
+
+
+<div id="poemModal">
+
+    <div
+        id="close"
+        onclick="document.getElementById('poemModal').style.display='none'"
+    >
+
+        &times;
+
+    </div>
+
+
+    <h2 id="modal-title"></h2>
+
+    <p id="modal-body"></p>
+
+</div>
+
+
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
+
+
+<script>
+
+
+const map = L.map('map', {
+    maxBounds: [[-85, -180], [85, 180]]
+}).setView([35.527, 139.75], 15);
+;
+
+
+/* 航空写真 */
+
+L.tileLayer(
+
+    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+
+    {
+        attribution: 'Tiles &copy; Esri'
+}
+
+).addTo(map);
+
+
+
+
+
+
+const spots = [
+     {
+                
+                date:"2025（NATIVE VOID)",
+                title:"試し",
+                lat: 35.22507,
+                lng: 139.7603,
+                poem:'『NATIVE VOID』26p掲載詩'
+    },
+
+    {
+                id:"hakumaku",
+                date:"2025（NATIVE VOID)",
+                title:"薄膜",
+                lat: 35.54507,
+                lng: 139.7603,
+                poem:'『NATIVE VOID』26p掲載詩'
+    },
+    {
+                id:"myjiku",
+                date:"2025（NATIVE VOID)",
+                title:"マイ・時空",
+                lat: 35.54641,
+                lng: 139.75256,
+                poem:'『NATIVE VOID』16p掲載詩'
+    },
+    {
+                id:"kusyoterminal",
+                date:"2025（NATIVE VOID)",
+                title:"空所ターミナル",
+                lat: 35.54522,
+                lng: 139.76949,
+                poem:'『NATIVE VOID』10p掲載詩'
+    },
+    {
+                id:"umami",
+                date:"2025（NATIVE VOID)",
+                title:"うまみ",
+                lat: 35.54523,
+                lng: 139.74107,
+                poem:'『NATIVE VOID』14p掲載詩'
+    },
+    {
+                id:"nativevoid",
+                date:"2025（NATIVE VOID)",
+                title:"ネイティブ・ボイド",
+                lat: 35.57521,
+                lng: 139.75268,
+                poem:'『NATIVE VOID』34p掲載詩'
+    },
+    {
+                id:"suibun",
+                date:"2025（NATIVE VOID)",
+                title:"水分",
+                lat: 35.58402,
+                lng: 139.74074,
+                poem:'『NATIVE VOID』32p掲載詩'
+    },
+    {
+                id:"koujyoyakei",
+                date:"2025（NAVIVE VOID）",
+                title:"工場夜景",
+                lat: 35.52330,
+                lng: 139.75293,
+                poem:`部屋の小窓なら夜でも空が見えるとか<br>
+                    明け方だれのものでもない空気とか<br>
+心地いい量で食べるのはやめていいとか<br>
+知らなかった<br>
+ラジオが流した音楽は空想のような現実で<br>
+こんなこともあっていいのかと疑いながら<br>
+隠れてすごく、信じていた<br>
+世の中は広いと教わりながらほぼ毎日いた<br>
+たいしてすることのない校舎で<br>
+新刊コーナーの本を開いた<br>
+あのとき<br>
+わたしの湿度ときらめきが体外で繋がった<br>
+この敷地に余さず割り振られた時間<br>
+狭苦しさのなかに収まっていた<br>
+工場夜景の写真集<br>
+ちょっとやりすぎなくらいギラギラした<br>
+要塞のような写真もそれはそれで<br>
+納得のいかなさがちょうどよかった<br>
+<br>
+新しく腰を据えた街の向こう岸は<br>
+本のなかにあった名前をしている<br>
+光の粒に生活の目線を逃しては<br>
+道を逸れるとすぐにいなくなる<br>
+期待を抱えて去っていく人たちが<br>
+からっぽを置いていった<br>
+定刻、先発の行き先表記に穴が空いて<br>
+ここからなにかがはじまっても<br>
+なにも残らない場所で<br>
+諦めるように逸れるように<br>
+ほんとう、の形を確かめていた<br>
+それだけは信じていた息苦しい憧れや羨望は<br>
+あやふやなまま<br>
+時間が得た実感に砕かれていった<br>
+引きずってきた跡は捻じ曲がっていて<br>
+戻りたい気もしない<br>
+<br>
+そこにあるのなら<br>
+もうそれだけを見ていたくなった<br>
+微かな兆しと光についていくことにした<br>
+<br>
+バス停の横<br>
+拾われてきた不揃いの休憩椅子<br>
+弾けた座面は直される気配がない<br>
+（本日の運行は終了しました）<br>
+でこぼこのアスファルト<br>
+街路樹は茂り夜は重さを増す<br>
+時々立ち止まりながら歩く人を<br>
+橋の真ん中あたりで追い越すと<br>
+（皆で同じカッコしてんなよ）<br>
+落書きを横目に<br>
+夜光交差点へ突入する<br>
+砂利やねじを弾き飛ばし<br>
+（交通公害　う回情報）<br>
+体内にいるかのような<br>
+頭上を通る管と歩道を進む<br>
+<br>
+プールのなかの金網が<br>
+数百倍の大きさになって建っていて<br>
+吐き出された水蒸気がこちらにも降ってくる<br>
+焼けたパンの中低域だけを集めた匂い<br>
+いつも遠くにいたあいつが間近に<br>
+<br>
+そこにはどんな態度もなかった<br>
+単一の壁<br>
+経年劣化の味はなく<br>
+魅せる姿や撮られる姿の用意もない<br>
+偽りのない原形と<br>
+影を晒し続ける光<br>
+胴体は大きく変哲のない線で組まれていて<br>
+細部を覗こうとするが<br>
+良く思われていない<br>
+光を取り込んで持ち帰る予定だった目線は<br>
+見当違いだったのかもしれない<br>
+点滅する炎や灯りは夜に煌めいて<br>
+希望みたいに見えもする<br>
+ドライブの車やバイクが立ち止まり路上駐車<br>
+意味を持って作られた工場の<br>
+意味の外にある夜景が<br>
+ひとつも答えず立っている<br>
+<br>
+帰り道はたいてい覚えていない<br>
+実感ごと持ち帰りたくてまた向かうけれど<br>
+なんとなく、といえるほどにも覚えていない<br>
+来る日もまた来る日も変わらず<br>
+目線の逃げ道として対岸の光を眺めていたら<br>
+もう戻れないくらい満ちてしまった<br>
+過去つくりだされた執着に<br>
+ひとつも答えず立っているいまも<br>
+それはそれで意味を振り切っていて<br>
+工場夜景のように<br>
+このまま光ってしまえばいい<br>
+<br>
+    <br>
+    <br>
+    『NATIVE VOID』掲載詩`
+    },
+
+    {
+                id:"tamagawaskybridge",
+                date:"2025（NATIVE VOID）",
+                title:"たまがわスカイブリッジ",
+                lat: 35.54150,
+                lng: 139.76170,
+                poem:`『NATIVE VOID』28p掲載詩`
+　　　　　 },
+
+    {
+                id:"deadend",
+                date:"2024.11中旬",
+                title: "Dead end - 川崎港廃油処理場",
+                lat: 35.510538,
+                lng: 139.777256,
+                poem: `集めた風を飾った部屋<br>
+                 ツリーのラメが反射する朝<br>
+                 光を浴びる<br>
+                 昨日までのこと<br>
+                 他人には救われないとわかってから<br>
+                 心拍が勇んでいる<br>
+                 私には私の言葉しかないQ.E.D.<br>
+                 屋根までのぼり消える気晴らし<br>
+                 なにかの間違いで家を出る<br>
+                 自転車やひとりごと<br>
+                 ありとあらゆる羽根に乗り<br>
+                 　羽田沖にはいろいろな青があって<br>
+                 　ジーンズと風の塔も<br>
+                 　防波堤を越え繋がる<br>
+                 ほんとうの願いすら<br>
+                 なかったことにできるくらい澄んでいる街は<br>
+                 同時に私の姿を浮かばせて<br>
+                 わからなくなる<br>
+                 近頃の海は考えすぎて<br>
+                 きれいであることを忘れている<br>
+                 猫が毛づくろいをする<br>
+                 川崎港廃油処理場ゲート<br>
+                 警告、監視中、通報、懲役<br>
+                 力ばかり主張する場所に<br>
+                 トラックが止まり<br>
+                 （靴の擦れる音）<br>
+                 二人組の兄ちゃんが<br>
+                 割り箸でごはんを分け与える<br>
+                 船や工場、防災無線<br>
+                 錆びたフェンスと有刺鉄線<br>
+                 無機質なコンクリートの道の傍ら<br>
+                 風にはためく海と雑草は<br>
+                 いつまでも飽きなくて<br>
+                 飽きるのが怖くなる<br>
+                 私の髪や袖口も<br>
+                 君らのようになりたがり揺れる<br>
+                 物事はすべて終わりがなければと<br>
+                 月日はいつでも私の手を<br>
+                 強く握ってうちへと帰すから<br>
+                 あたたかいうちに離れようそして<br>
+                 何度でも来よう<br>
+                 この行き止まりに<br>
+                 うまくいくような兆しもないが<br>
+                 救われなくたって生きるよ<br>
+                 <br>
+                 <br>
+                 <br>
+                 初出｜現代詩手帖2025年1月投稿欄<br>
+                 『NATIVE VOID』掲載詩`
+            },
+
+    {
+                
+                date:"2024.10.25-11.2",
+                title:"travel in Torrance and LA 2024",
+                lat: 33.78332,
+                lng:"-118.34511",
+                poem:`10/25 Redondo beach<br>
+10/26 The Getty Center→drive around Santa Monica<br>
+10/27 South Coast Botanic Garden→Went to a bookstore and bought the book "Into The Wild".<br>
+10/28 Clean the garden DAY1→Sunset in Redondo beach<br>
+10/29 Gardening DAY2→ Watched the movie "Kiki’s Delivery Service” <br>
+10/30 I got the DVD "Kiki’s Delivery Service" at the bookstore!<br>
+10/31 Aquarium of the Pacific→Happy HALLOWEEEEEEN<br>
+11/1    Gardening DAY3<br>
+11/2   Los Angeles International Airport`
+
+            },
+
+    {
+        id:"buranko",
+        date: "2024.春",
+        title: "ぶらんこ",
+        lat: 35.54359,
+        lng: 139.72227,
+
+        poem: `雲は粘膜<br>
+        太陽やわく桃色の肌<br>
+        に包まれる錆びた<br>
+        工場の朝礼おはようございます<br>
+        七時くらいかなパン屋で<br>
+        あんドーナツとカレーパン<br>
+        揚げたてが食べられる休日<br>
+        海中道路の窓から湧きあがる<br>
+        背中からぶらんこ駆けあがるように<br>
+        技術に自然の新芽を譲った羽田川崎にも<br>
+        みどりの深呼吸が透き抜けます<br>
+        飛行機がありとあらゆる<br>
+        「上空を通過しました」<br>
+        顕微鏡でしか見たことがない<br>
+        緻密な工場の配管<br>
+        てらてら腹をすかせた海<br>
+        いまだれよりも幸せ<br>
+        それがわかちあえる喜びでないことを<br>
+        次の瞬間おもいきり吸い込む<br>
+        前に漕ぐ<br>
+        商店街の音楽が流れはじめ<br>
+        目を閉じると落ちる<br>
+        さあ<br>
+        川崎港廃油処理場、引き返す<br>
+        <br>
+        <br>
+        <br>
+        初出｜フリーペーパー『南窓』第２号<br>
+        『NATIVE VOID』掲載詩`
+
+    }
+
+];
+
+
+
+/* ピンを作る */
+
+spots.forEach(spot => {
+
+
+    const pinClass = spot.id ? "red-pin" : "blue-pin";
+
+const pinIcon = L.divIcon({
+    html: `<div class="${pinClass}"></div>`,
+    className: '',
+    iconSize: [60, 60],
+    iconAnchor: [30, 30]
+});
+
+
+    const marker = L.marker(
+
+        [spot.lat, spot.lng],
+
+        { icon: pinIcon }
+
+    ).addTo(map);
+
+
+    /* UPDATEからこのピンを呼び出すために記憶 */
+
+    spot.marker = marker;
+
+
+    /* ピンを押したとき */
+
+    marker.on('click', function() {
+
+
+        document.getElementById(
+
+            "modal-title"
+
+        ).innerText = spot.title;
+
+
+        document.getElementById(
+
+            "modal-body"
+
+        ).innerHTML = spot.poem;
+
+
+        document.getElementById(
+
+            "poemModal"
+
+        ).style.display = "block";
+
+
+    });
+
+});
+
+
+
+/* UPDATEを作る */
+
+const updateList = document.getElementById("update-list");
+
+
+spots.forEach(spot => {
+
+
+    const item = document.createElement("div");
+
+
+    item.className = "update-item";
+
+
+    item.innerHTML = `
+
+        <span class="update-date">${spot.date}</span>
+
+        <span>${spot.title}</span>
+
+    `;
+
+
+    /* UPDATEを押したとき */
+
+   item.addEventListener("click", function() {
+    window.scrollTo({
+        top: document.getElementById("map").offsetTop,
+        behavior: "smooth"
+    });
+
+    map.setView([spot.lat, spot.lng], 15);
+
+    const pin = spot.marker.getElement().querySelector(".blue-pin, .red-pin");
+    pin.classList.remove("pin-jump");
+    void pin.offsetWidth;
+    pin.classList.add("pin-jump");
+　　 });
+
+
+    updateList.appendChild(item);
+
+});
+
+
+
+/* 地図をクリックしたら詩の画面を閉じる */
+
+map.on('click', function() {
+
+    document.getElementById(
+
+        "poemModal"
+
+    ).style.display = "none";
+
+});
+
+/* NATIVE VOIDページより */
+
+const params = new URLSearchParams(window.location.search);
+const spotName = params.get("spot");
+
+const targetSpot = spots.find(
+    spot => spot.id === spotName
+);
+
+if (targetSpot) {
+
+    map.setView(
+        [targetSpot.lat, targetSpot.lng],
+        15,
+        { animate: false }
+    );
+
+    setTimeout(function() {
+
+        const pin = targetSpot.marker
+            .getElement()
+            .querySelector(".blue-pin, red-pin");
+
+        pin.classList.remove("pin-jump");
+        void pin.offsetWidth;
+        pin.classList.add("pin-jump");
+
+    }, 100);
+}
+
+</script>
+
+<script>
+
+const menuButton = document.querySelector(".menu-button");
+const menu = document.querySelector(".menu");
+
+menuButton.addEventListener("click", function() {
+
+    menu.classList.toggle("open");
+
+    if (menu.classList.contains("open")) {
+        menuButton.textContent = "×";
+        menuButton.setAttribute("aria-label", "メニューを閉じる");
+    } else {
+        menuButton.textContent = "≡";
+        menuButton.setAttribute("aria-label", "メニューを開く");
+    }
+
+});
+
+</script>
+
+
+</body>
+
+</html>

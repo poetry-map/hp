@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小倉尚子｜Ogura Naoko</title>
+    <link rel="stylesheet" href="hpstyle.css">
+</head>
+
+<body>
+
+<header>
+
+    <a href="top.html" class="name">
+        小倉尚子｜Ogura Naoko
+    </a>
+
+    <button class="menu-button" aria-label="メニューを開く">
+        ≡
+    </button>
+
+</header>
+
+<nav class="menu">
+
+    <a href="works.html">works</a>
+    <a href="words on the ground.html">words on the ground</a>
+    <a href="about.html">about</a>
+
+    <div class="social-links">
+
+    <a href="https://www.instagram.com/ichito_1/" target="_blank" aria-label="Instagram">
+        <img src="Instagram_Glyph_Black.svg" alt="">
+    </a>
+
+
+    <a href="https://soundcloud.com/ichito-528352315" target="_blank" aria-label="SoundCloud">
+        <img src="https://cdn.prod.website-files.com/62a0a0168756b795debc65bc/69ef2abb30d1aae32ea4f517_Horizontal%20Black%20(transparent)-download.webp" alt="">
+    </a>
+
+　　</div>
+</nav>
+
+
+<main class="container">
+
+
+    <section class="top-image">
+
+        <img src="profile.jpg" alt="プロフィール写真">
+
+    </section>
+
+
+    <section class="information">
+
+        <h2>information</h2>
+
+        <div class="information-list">
+
+            <p>09.12｜sat｜AM4:07 vol.6（七月堂）発売</p>
+            <p>11.03｜tue｜文学フリマ東京43</p>
+
+        </div>
+
+    </section>
+
+
+    <section class="top-words">
+
+        <h2>words on the ground</h2>
+
+        <div class="words-list">
+
+            <p>2026.09.04　土地名</p>
+            <p>2026.08.28　土地名</p>
+            <p>2026.08.15　土地名</p>
+
+        </div>
+
+    </section>
+
+
+</main>
+
+<script>
+
+const menuButton = document.querySelector(".menu-button");
+const menu = document.querySelector(".menu");
+
+menuButton.addEventListener("click", function() {
+
+    menu.classList.toggle("open");
+
+    if (menu.classList.contains("open")) {
+        menuButton.textContent = "×";
+        menuButton.setAttribute("aria-label", "メニューを閉じる");
+    } else {
+        menuButton.textContent = "≡";
+        menuButton.setAttribute("aria-label", "メニューを開く");
+    }
+
+});
+
+</script>
+
+</body>
+
+</html>

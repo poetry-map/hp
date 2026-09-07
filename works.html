@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小倉尚子｜Ogura Naoko</title>
+    <link rel="stylesheet" href="hpstyle.css">
+
+    <style>
+
+        #works {
+            padding-top: 100px;
+            padding-bottom: 100px;
+        }
+
+        #works h2 {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .work-item {
+            width: 100%;
+            max-width: 680px;
+            margin: 0 auto 80px;
+            text-align: center;
+        }
+
+        .work-image {
+            display: block;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        .work-title {
+            margin-top: 20px;
+        }
+
+        .work-date {
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+
+
+        /* スマホ */
+
+        @media (max-width: 680px) {
+
+            #works {
+                padding-top: 100px;
+            }
+
+            .work-item {
+                max-width: none;
+                margin-bottom: 60px;
+            }
+
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+<header>
+
+    <a href="top.html" class="name">
+        小倉尚子｜Ogura Naoko
+    </a>
+
+    <button class="menu-button" aria-label="メニューを開く">
+        ≡
+    </button>
+
+</header>
+
+<nav class="menu">
+
+    <a href="works.html">works</a>
+    <a href="words on the ground.html">words on the ground</a>
+    <a href="about.html">about</a>
+
+    <div class="social-links">
+
+    <a href="https://www.instagram.com/ichito_1/" target="_blank" aria-label="Instagram">
+        <img src="Instagram_Glyph_Black.svg" alt="">
+    </a>
+
+
+    <a href="https://soundcloud.com/ichito-528352315" target="_blank" aria-label="SoundCloud">
+        <img src="https://cdn.prod.website-files.com/62a0a0168756b795debc65bc/69ef2abb30d1aae32ea4f517_Horizontal%20Black%20(transparent)-download.webp" alt="">
+    </a>
+
+　　</div>
+</nav>
+
+<main id="works">
+
+    <h2>Works</h2>
+
+    <div id="work-list"></div>
+
+</main>
+
+
+<script>
+
+const works = [
+
+　　　{
+        title: "（寄稿）「AM4:07」vol.6",
+        date: "2026.09.12",
+        image: "AM407vol.6_HP1.jpg",
+        link: "AM407vol.6.html"
+    },
+
+　　{
+        title: "詩集（冊子）『公道』",
+        date: "2026.05.04",
+        image: "公道_HP.jpg",
+        link: "kodo.html"
+    },
+
+　　{
+        title: "詩集（冊子）『（void, void, void)』",
+        date: "2026.01.28",
+        image: "voidvoidvoid_HP.jpg",
+        link: "voidvoidvoid.html"
+    },
+
+    {
+        title: "詩集（冊子）『NATIVE VOID』",
+        date: "2025.10.01",
+        image: "NATIVE VOID_HP.jpg",
+        link: "NATIVE VOID.html"
+    },
+
+    {
+        title: "（寄稿）『南窓』第２号",
+        date: "2024.05",
+        image: "南窓2_HP1.jpg",
+        link:"nanso2.html"
+    }
+
+];
+
+
+const workList = document.getElementById("work-list");
+
+
+works.forEach(work => {
+
+    const item = document.createElement("div");
+
+    item.className = "work-item";
+
+    item.innerHTML = `
+
+    <a href="${work.link || '#'}">
+
+        <img
+            class="work-image"
+            src="${work.image}"
+            alt="${work.title}"
+        >
+
+    </a>
+
+    <div class="work-title">
+        ${work.title}
+    </div>
+
+    `;
+
+    workList.appendChild(item);
+
+});
+
+</script>
+
+
+<script>
+
+const menuButton = document.querySelector(".menu-button");
+const menu = document.querySelector(".menu");
+
+menuButton.addEventListener("click", function() {
+
+    menu.classList.toggle("open");
+
+    if (menu.classList.contains("open")) {
+        menuButton.textContent = "×";
+        menuButton.setAttribute("aria-label", "メニューを閉じる");
+    } else {
+        menuButton.textContent = "≡";
+        menuButton.setAttribute("aria-label", "メニューを開く");
+    }
+
+});
+
+</script>
+
+
+</body>
+
+</html>
