@@ -6,7 +6,7 @@
 
     <meta charset="UTF-8">
 
-    <title>Words on the Ground</title>
+    <title>words on the ground</title>
 
     <link rel="stylesheet" href="hpstyle.css">
 
@@ -30,6 +30,12 @@
     z-index: 1001;
 }
 
+.map-description {
+    width: calc(100% - 40px);
+    max-width: 680px;
+    margin-left: auto;
+    margin-right: auto;
+}
 
         #map {
 
@@ -86,26 +92,22 @@
         /* Update */
 
         #update-list {
+    width: calc(100% - 40px);
+    max-width: 680px;
+    margin: 40px auto;
+}
 
-            margin-top: 40px;
-            margin-bottom: 40px;
+nav > h2 {
+    width: calc(100% - 40px);
+    max-width: 680px;
+    margin-left: auto;
+    margin-right: auto;
+}
 
-        }
-
-
-        .update-item {
-
-            margin-bottom: 25px;
-            cursor: pointer;
-
-        }
-
-
-        .update-item:hover {
-
-            opacity: 0.5;
-
-        }
+.update-item {
+    margin-bottom: 25px;
+    cursor: pointer;
+}
 
 
         .update-date {
@@ -240,7 +242,7 @@
 
 <nav>
 
-    <p>
+    <p class="map-description">
      地図に立ったピンを押すと、その場所にまつわる詩やエッセイを読むことができます<br>
      ＊赤いピンは詩集『NATIVE VOID』掲載詩の所在です
     </p>
