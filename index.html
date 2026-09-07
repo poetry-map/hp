@@ -60,7 +60,7 @@
         <div class="information-list">
 
             <p>09.12｜sat｜AM4:07 vol.6（七月堂）発売</p>
-            <p>11.08｜sun｜文学フリマ東京43</p>
+            <p>11.03｜tue｜文学フリマ東京43</p>
 
         </div>
 
@@ -71,18 +71,31 @@
 
         <h2>words on the ground</h2>
 
-        <div class="words-list">
-
-            <p>2026.09.05　恵比寿散歩</p>
-            <p>2026.08.28　土地名</p>
-            <p>2026.08.15　土地名</p>
-
-        </div>
+        <div class="words-list" id="latest-words"></div>
 
     </section>
 
 
 </main>
+
+<script src="spots.js"></script>
+
+<script>
+const latestWords = document.getElementById("latest-words");
+
+spots
+    .slice()
+    .sort((a, b) => b.date.localeCompare(a.date))
+    .slice(0, 3)
+    .forEach(spot => {
+        const p = document.createElement("p");
+
+        p.innerHTML = `
+    <a href="words on the ground.html?lat=${spot.lat}&lng=${spot.lng}">${spot.date}　${spot.title}</a>
+`;
+        latestWords.appendChild(p);
+    });
+</script>
 
 <script>
 
