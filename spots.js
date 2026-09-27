@@ -280,7 +280,7 @@ const spots = [
         <br>
         <br>
         初出｜フリーペーパー『南窓』第２号<br>
-        『NATIVE VOID』掲載詩<br>2025.10.01発行`
+        『NATIVE VOID』掲載詩<br>2024春`
 
     }
 
