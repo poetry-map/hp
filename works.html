@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小倉尚子｜Ogura Naoko</title>
+    <link rel="stylesheet" href="hpstyle.css">
+</head>
+
+<body>
+
+<header>
+
+    <a href="index.html" class="name">
+        小倉尚子｜Ogura Naoko
+    </a>
+
+    <button class="menu-button" aria-label="メニューを開く">
+        ≡
+    </button>
+
+</header>
+
+<nav class="menu">
+
+    <a href="book visuals.html">Book Visuals</a>
+    <a href="works.html">Works</a>
+    <a href="words on the ground.html">Words On The Ground</a>
+    <a href="about.html">About</a>
+    
+    <div class="social-links">
+
+    <a href="https://www.instagram.com/ichito_1/" target="_blank" aria-label="Instagram">
+        <img src="Instagram_Glyph_Black.svg" alt="">
+    </a>
+
+
+    <a href="https://soundcloud.com/ichito-528352315" target="_blank" aria-label="SoundCloud">
+        <img src="https://cdn.prod.website-files.com/62a0a0168756b795debc65bc/69ef2abb30d1aae32ea4f517_Horizontal%20Black%20(transparent)-download.webp" alt="">
+    </a>
+
+　　</div>
+</nav>
+
+<main>
+
+    <section class="container">
+
+        <h2>Works</h2>
+
+        <p>
+            
+            【2026年】<br>
+            個人サイトオープン
+            9月12日発行<a href="https://shichigatsud.buyshop.jp/items/154673956" target="_blank">ZINE「AM4:07」（七月堂）</a>に「誕生日ケーキ」という詩を書かせていただきました<br>
+            5月4日私家版詩集冊子『公道』発行<br>
+            1月28日私家版詩冊子「（void, void, void）」発行<br><br>
+            【2025年】<br>
+            10月1日私家版詩集冊子『NATIVE VOID』発行<br>
+            現代詩手帖1月号投稿欄に「Dead end-川崎港廃油処理場」掲載<br><br>
+            【2024年】<br>
+            6月22日発行　『南窓』第2号に「ぶらんこ」という詩を書かせていただきました（参加メンバーは山内優花さん／宿久理花子さん／小倉尚子、発行人は君野隆久さん）<br>
+            インカレポエトリ第10号 貂　参加<br>
+            2月　大学卒業制作　日記『よい旅を』<br><br>
+            【2022年】<br>
+            秋　大学の展覧会にて日記本『；』1部発行（だれかの手に渡りました）<br><br>
+            【2021年】<br>
+            インカレポエトリ第5号 燕 参加<br><br>
+            【2020年】<br>
+            学生詩集<a href="https://shichigatsud.buyshop.jp/items/34150617" target="_blank">インカレポエトリ第3号 犀</a>参加
+
+
+        </p>
+
+    </section>
+
+
+
+</main>
+
+<script>
+
+const menuButton = document.querySelector(".menu-button");
+const menu = document.querySelector(".menu");
+
+menuButton.addEventListener("click", function() {
+
+    menu.classList.toggle("open");
+
+    if (menu.classList.contains("open")) {
+        menuButton.textContent = "×";
+        menuButton.setAttribute("aria-label", "メニューを閉じる");
+    } else {
+        menuButton.textContent = "≡";
+        menuButton.setAttribute("aria-label", "メニューを開く");
+    }
+
+});
+
+</script>
+
+</body>
+
+</html>
